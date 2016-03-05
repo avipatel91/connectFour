@@ -1,0 +1,154 @@
+<h1>type runGame(); into console to run game.<h1>
+
+<h3>Note: Page must be refreshed for every new game</h3>
+
+<script type="text/javascript">
+var gameOver = false;
+var playerOne = 'X';
+var playerTwo = 'O';
+
+var board = [
+              ['*', '*', '*', '*', '*', '*', '*'],
+              ['*', '*', '*', '*', '*', '*', '*'],
+              ['*', '*', '*', '*', '*', '*', '*'],
+              ['*', '*', '*', '*', '*', '*', '*'],
+              ['*', '*', '*', '*', '*', '*', '*'],
+            ]
+
+var printBoard = function(){
+  var printedBoard = ""
+  for(var row = 0; row < board.length; row++){
+     printedBoard += board[row].join(' ') + '\n';
+  }
+  console.log(printedBoard);
+}
+
+var placePiece = function(column, piece){
+  var position = [];
+  var filled = false;
+  for(var row = board.length - 1; row >= 0 && !filled; row--){
+    if(board[row][column] == '*'){
+      position = [row, column];
+      board[row][column] = piece;
+      filled = true;
+    }
+  }
+  if(!filled){
+    return -1;
+  }
+  return position;
+}
+
+var checkWinner = function(piece, position){
+  var gameWon = false;
+  var count = 1;
+  //checking left and right;
+  for(var span = 1; span <= 3; span++){
+    var continueLeft = continueRight = true;
+    if(position[1] + span < board[0].length && continueLeft && board[position[0]][position[1] + span] == piece){
+     count++;
+    }else{
+      continueLeft = false;
+    }
+   if(position[1] - span >= 0 && continueRight && board[position[0]][position[1] - span] == piece){
+     count++;
+    }else{
+     continueRight = false;
+   }
+  }
+  checkGameState(count, piece);
+   
+  //checking top and bottom
+  count = 1;
+  for(var span = 1; !gameOver && span <= 3; span++){
+    var continueTop = continueBottom = true;
+    if(position[0] + span < board.length && continueTop && board[position[0] + span][position[1]] == piece){
+     count++;
+    }else{
+      continueLeft = false;
+    }
+   if(position[0] - span >= 0 && continueBottom && board[position[0] - span][position[1]] == piece){
+      count++;
+    }else{
+     continueRight = false;
+   }
+  }
+  checkGameState(count, piece);
+
+  //checking diagnol one
+  count = 1;
+  for(var span = 1; !gameOver && span <= 3; span++){
+    var continueTop = continueBottom = true;
+    if(position[0] + span < board.length  && position[1] + span  < board[0].length && continueTop && board[position[0] + span][position[1] + span] == piece){
+     count++;
+    }else{
+      continueLeft = false;
+    }
+   if(position[0] - span >= 0 && position[1] - span  >= 0 && continueBottom && board[position[0] - span][position[1] - span] == piece){
+      count++;
+    }else{
+     continueRight = false;
+   }
+  }
+  checkGameState(count, piece);
+
+  //checking diagnol two
+  count = 1;
+  for(var span = 1; !gameOver && span <= 3; span++){
+    var continueTop = continueBottom = true;
+    if(position[0] - span >= 0  && position[1] + span  < board[0].length && continueTop && board[position[0] - span][position[1] + span] == piece){
+     count++;
+    }else{
+      continueLeft = false;
+    }
+   if(position[0] + span < board.length && position[1] - span  >= 0 && continueBottom && board[position[0] + span][position[1] - span] == piece){
+      count++;
+    }else{
+     continueRight = false;
+   }
+  }
+  checkGameState(count, piece);
+
+}
+
+
+var checkGameState = function(count, player){
+  if(count == 4){
+    gameOver = true;
+    if(player == playerOne){
+      console.log('Player One is the winner!');
+    }else{
+      console.log('Player Two is the winner!');
+    }
+  }
+}
+
+
+var runGame = function(){
+  while(!gameOver){
+     var moveForward = false;
+     while(!moveForward){
+       var move = prompt('Player One enter move');
+       var position = placePiece(move - 1, playerOne);
+       if(position != -1){ //board might be filled up.
+         moveForward = true;
+       }
+       printBoard();
+       checkWinner(playerOne, position);
+     }
+     if(gameOver){
+ 	return;
+     }
+     moveForward = false;
+     while(!moveForward){
+       var move = prompt('Player Two enter move');
+       var position = placePiece(move - 1, playerTwo);
+       if(position != -1){ //board might be filled up.
+         moveForward = true;
+       }
+       printBoard();
+       checkWinner(playerTwo, position);
+     }
+  }
+}
+</script>
